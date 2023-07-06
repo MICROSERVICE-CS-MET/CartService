@@ -37,7 +37,17 @@ class CartService(
     }
 
     suspend fun getCartItemsByUserId(userId:String):List<CartItem>{
-        return cartRepository.findCartItemsByUserId(userId)
+        var cart = cartRepository.findByUserId(userId)?:cartRepository.save(Cart(userId=userId,cartItems=
+        ArrayList<CartItem>()))
+        return cart.cartItems!!
+    }
+
+    suspend fun cleanToCart(userId: String){
+        var cart = cartRepository.findByUserId(userId)?:cartRepository.save(Cart(userId=userId,cartItems=
+        ArrayList<CartItem>()))
+
+        cart.cartItems= ArrayList<CartItem>()
+        cartRepository.save(cart)
     }
 
 

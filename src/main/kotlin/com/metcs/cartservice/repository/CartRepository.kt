@@ -10,5 +10,4 @@ import java.util.UUID
 @Repository
 interface CartRepository: MongoRepository<Cart,ObjectId> {
     fun findByUserId(id:String):Cart?
-    fun findCartItemsByUserId(id:String):List<CartItem>
 }
