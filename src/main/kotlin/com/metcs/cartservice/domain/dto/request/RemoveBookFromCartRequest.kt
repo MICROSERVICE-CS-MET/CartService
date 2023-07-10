@@ -1,7 +1,6 @@
 package com.metcs.cartservice.domain.dto.request
 
-
-data class RemoveBookFromCartRequest (
+data class RemoveBookFromCartRequest(
     var bookId: String,
-    var userId: String
+    var userId: String,
 )

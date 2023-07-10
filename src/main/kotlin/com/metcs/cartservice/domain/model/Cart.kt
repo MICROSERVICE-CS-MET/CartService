@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
 data class Cart(
-    @Id val id: ObjectId?=null,
+    @Id val id: ObjectId? = null,
     var userId: String,
-    var cartItems:List<CartItem>?=null
+    var cartItems: List<CartItem>? = null,
 
 )

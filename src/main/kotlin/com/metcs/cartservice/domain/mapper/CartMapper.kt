@@ -8,7 +8,7 @@ import org.mapstruct.Mapper
 
 @Mapper
 interface CartMapper {
-    fun cartToCartResponse(cart:Cart):CartResponse
-    fun cartItemToCartItemResponse(cartItem: CartItem):CartItemResponse
-    fun cartItemsToCartItemsListResponse(cartItems: List<CartItem>):List<CartItemResponse>
+    fun cartToCartResponse(cart: Cart): CartResponse
+    fun cartItemToCartItemResponse(cartItem: CartItem): CartItemResponse
+    fun cartItemsToCartItemsListResponse(cartItems: List<CartItem>): List<CartItemResponse>
 }

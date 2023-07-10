@@ -6,47 +6,56 @@ import com.metcs.cartservice.domain.dto.response.CartItemResponse
 import com.metcs.cartservice.domain.dto.response.CartResponse
 import com.metcs.cartservice.domain.events.CompleteOrderEvent
 import com.metcs.cartservice.domain.mapper.CartMapper
-import com.metcs.cartservice.domain.model.Cart
-import com.metcs.cartservice.domain.model.CartItem
 import com.metcs.cartservice.producer.CartProducer
 import com.metcs.cartservice.service.CartService
 import org.mapstruct.factory.Mappers
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/carts")
 class CartController(
     private val cartService: CartService,
-    private val cartProducer: CartProducer
+    private val cartProducer: CartProducer,
 ) {
     @GetMapping("/{userid}")
-    suspend fun findCartByUserId(@PathVariable("userid")userId:String):CartResponse{
+    suspend fun findCartByUserId(@PathVariable("userid")userId: String): CartResponse {
         val converter = Mappers.getMapper(CartMapper::class.java)
         return converter.cartToCartResponse(cartService.findByUserId(userId))
     }
+
     @GetMapping("/cartItems/{userid}")
-    suspend fun findCartItemsByUserId(@PathVariable("userid")userId:String):List<CartItemResponse>{
+    suspend fun findCartItemsByUserId(@PathVariable("userid")userId: String): List<CartItemResponse> {
         val converter = Mappers.getMapper(CartMapper::class.java)
         return converter.cartItemsToCartItemsListResponse(cartService.getCartItemsByUserId(userId))
     }
+
     @PostMapping("/cartItems/addBook")
-    suspend fun addBookToCart(@RequestBody addBookToCartRequest: AddBookToCartRequest){
+    suspend fun addBookToCart(@RequestBody addBookToCartRequest: AddBookToCartRequest) {
         cartService.addBookToCart(addBookToCartRequest)
     }
+
     @DeleteMapping("/cartItems/removeBook")
-    suspend fun addBookToCart(@RequestBody removeBookFromCartRequest: RemoveBookFromCartRequest){
+    suspend fun addBookToCart(@RequestBody removeBookFromCartRequest: RemoveBookFromCartRequest) {
         cartService.removeBookFromCart(removeBookFromCartRequest)
     }
+
     @DeleteMapping("/cartItems/cleanCart/{userid}")
-    suspend fun cleanToCart(@PathVariable("userid")userId: String){
+    suspend fun cleanToCart(@PathVariable("userid")userId: String) {
         cartService.cleanToCart(userId)
     }
 
     @PostMapping("/test")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun sendTestMessage(
-        @RequestBody completeOrderEvent: CompleteOrderEvent
+        @RequestBody completeOrderEvent: CompleteOrderEvent,
     ) {
         cartProducer.sendCompleteOrderEvent(completeOrderEvent)
     }

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: spring-kafka-producer
+  kafka:
+    bootstrap-servers: http://localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  data:
+    mongodb:
+      port: 27018
+      host: localhost
+server:
+  port: 6060
