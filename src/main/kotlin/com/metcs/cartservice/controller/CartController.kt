@@ -4,17 +4,21 @@ import com.metcs.cartservice.domain.dto.request.AddBookToCartRequest
 import com.metcs.cartservice.domain.dto.request.RemoveBookFromCartRequest
 import com.metcs.cartservice.domain.dto.response.CartItemResponse
 import com.metcs.cartservice.domain.dto.response.CartResponse
+import com.metcs.cartservice.domain.events.CompleteOrderEvent
 import com.metcs.cartservice.domain.mapper.CartMapper
 import com.metcs.cartservice.domain.model.Cart
 import com.metcs.cartservice.domain.model.CartItem
+import com.metcs.cartservice.producer.CartProducer
 import com.metcs.cartservice.service.CartService
 import org.mapstruct.factory.Mappers
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/carts")
 class CartController(
-    private val cartService: CartService
+    private val cartService: CartService,
+    private val cartProducer: CartProducer
 ) {
     @GetMapping("/{userid}")
     suspend fun findCartByUserId(@PathVariable("userid")userId:String):CartResponse{
@@ -37,5 +41,13 @@ class CartController(
     @DeleteMapping("/cartItems/cleanCart/{userid}")
     suspend fun cleanToCart(@PathVariable("userid")userId: String){
         cartService.cleanToCart(userId)
+    }
+
+    @PostMapping("/test")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun sendTestMessage(
+        @RequestBody completeOrderEvent: CompleteOrderEvent
+    ) {
+        cartProducer.sendCompleteOrderEvent(completeOrderEvent)
     }
 }
