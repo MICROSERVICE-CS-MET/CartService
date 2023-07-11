@@ -4,19 +4,17 @@ import com.metcs.cartservice.domain.dto.request.AddBookToCartRequest
 import com.metcs.cartservice.domain.dto.request.RemoveBookFromCartRequest
 import com.metcs.cartservice.domain.dto.response.CartItemResponse
 import com.metcs.cartservice.domain.dto.response.CartResponse
-import com.metcs.cartservice.domain.events.CompleteOrderEvent
 import com.metcs.cartservice.domain.mapper.CartMapper
 import com.metcs.cartservice.producer.CartProducer
 import com.metcs.cartservice.service.CartService
 import org.mapstruct.factory.Mappers
-import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -47,16 +45,14 @@ class CartController(
         cartService.removeBookFromCart(removeBookFromCartRequest)
     }
 
+    @PostMapping("/completeOrder/{cartId}")
+    suspend fun completeOrder(@PathVariable("cartId")cartId: String): ResponseEntity<String> {
+        cartService.completeOrder(cartId)
+        return ResponseEntity.ok("Order Completed")
+    }
+
     @DeleteMapping("/cartItems/cleanCart/{userid}")
     suspend fun cleanToCart(@PathVariable("userid")userId: String) {
         cartService.cleanToCart(userId)
-    }
-
-    @PostMapping("/test")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun sendTestMessage(
-        @RequestBody completeOrderEvent: CompleteOrderEvent,
-    ) {
-        cartProducer.sendCompleteOrderEvent(completeOrderEvent)
     }
 }

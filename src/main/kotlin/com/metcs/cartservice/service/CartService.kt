@@ -2,34 +2,37 @@ package com.metcs.cartservice.service
 
 import com.metcs.cartservice.domain.dto.request.AddBookToCartRequest
 import com.metcs.cartservice.domain.dto.request.RemoveBookFromCartRequest
+import com.metcs.cartservice.domain.mapper.CartMapper
 import com.metcs.cartservice.domain.model.Cart
 import com.metcs.cartservice.domain.model.CartItem
 import com.metcs.cartservice.exception.CartHasNoDataException
+import com.metcs.cartservice.producer.CartProducer
 import com.metcs.cartservice.repository.CartRepository
+import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
 
 @Service
 class CartService(
     private val cartRepository: CartRepository,
+    private val cartProducer: CartProducer,
 ) {
     suspend fun findByUserId(userId: String): Cart {
         return cartRepository.findByUserId(userId) ?: cartRepository.save(
             Cart(
                 userId = userId,
-                cartItems =
-                ArrayList<CartItem>(),
+                cartItems = ArrayList<CartItem>(),
             ),
         )
     }
     suspend fun addBookToCart(addToCartDto: AddBookToCartRequest) {
-        val cart = addToCartDto.userId?.let { cartRepository.findByUserId(it) } ?: cartRepository.save(
+        val cart = cartRepository.findByUserId(addToCartDto.userId) ?: cartRepository.save(
             Cart(
                 userId = addToCartDto.userId,
                 cartItems =
                 ArrayList<CartItem>(),
             ),
         )
-        cart.cartItems = addToCartDto.bookId?.let { addToCartList(cart.cartItems!!.toMutableList(), it) }
+        cart.cartItems = addToCartList(cart.cartItems!!.toMutableList(), addToCartDto)
         cartRepository.save(cart)
     }
 
@@ -38,7 +41,7 @@ class CartService(
             "Cart Already Has No" +
                 " Data",
         )
-        cart.cartItems = removeBookFromCartRequest.bookId?.let {
+        cart.cartItems = removeBookFromCartRequest.productId?.let {
             removeFromCartList(
                 cart.cartItems!!.toMutableList(),
                 it,
@@ -70,14 +73,20 @@ class CartService(
         cart.cartItems = ArrayList<CartItem>()
         cartRepository.save(cart)
     }
+    suspend fun completeOrder(cartId: String) {
+        val cart = cartRepository.findById(cartId).orElseThrow { RuntimeException("Cart Not Found") }
+        val converter = Mappers.getMapper(CartMapper::class.java)
+        val completeOrderEvent = converter.cartToCompleteOrderEvent(cart)
+        cartProducer.sendCompleteOrderEvent(completeOrderEvent)
+    }
 
     private fun removeFromCartList(cartItems: MutableList<CartItem>, bookId: String): MutableList<CartItem> {
         val iterator = cartItems.iterator()
         while (iterator.hasNext()) {
             val item = iterator.next()
-            if (item.bookId == bookId) {
-                if (item.count!! > 1) {
-                    item.count = item.count!! - 1
+            if (item.productId == bookId) {
+                if (item.productCount!! > 1) {
+                    item.productCount = item.productCount!! - 1
                 } else {
                     iterator.remove()
                 }
@@ -87,18 +96,19 @@ class CartService(
         return cartItems
     }
 
-    private fun addToCartList(cartItems: MutableList<CartItem>, bookId: String): MutableList<CartItem> {
+    private fun addToCartList(cartItems: MutableList<CartItem>, product: AddBookToCartRequest): MutableList<CartItem> {
         var foundItem: CartItem? = null
         for (item in cartItems) {
-            if (item.bookId == bookId) {
+            if (item.productId == product.productId) {
                 foundItem = item
                 break
             }
         }
         if (foundItem != null) {
-            foundItem.count = foundItem.count?.plus(1)
+            foundItem.productCount = foundItem.productCount?.plus(product.productCount)
+            foundItem.totalPrice = product.totalPrice?.plus((product.unitPrice?.times(product.productCount)!!))
         } else {
-            val newItem = CartItem(bookId, 1, 0.0, 0.0)
+            val newItem = CartItem(product.productId, product.productCount, product.unitPrice, product.totalPrice)
             cartItems.add(newItem)
         }
         return cartItems

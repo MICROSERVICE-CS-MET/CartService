@@ -10,5 +10,6 @@ spring:
     mongodb:
       port: 27018
       host: localhost
+      database: cart-db
 server:
   port: 6060
