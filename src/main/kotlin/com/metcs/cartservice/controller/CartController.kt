@@ -9,6 +9,7 @@ import com.metcs.cartservice.producer.CartProducer
 import com.metcs.cartservice.service.CartService
 import org.mapstruct.factory.Mappers
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,6 +24,11 @@ class CartController(
     private val cartService: CartService,
     private val cartProducer: CartProducer,
 ) {
+    @GetMapping()
+    suspend fun test(): String {
+        return "Selam"
+    }
+
     @GetMapping("/{userid}")
     suspend fun findCartByUserId(@PathVariable("userid")userId: String): CartResponse {
         val converter = Mappers.getMapper(CartMapper::class.java)

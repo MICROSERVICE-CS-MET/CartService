@@ -1,6 +1,6 @@
 spring:
   application:
-    name: spring-kafka-producer
+    name: cart-service
   kafka:
     bootstrap-servers: http://localhost:29092
     producer:
@@ -11,5 +11,7 @@ spring:
       port: 27018
       host: localhost
       database: cart-db
+  banner:
+    location: banner.txt
 server:
-  port: 6060
+  port: 5050
