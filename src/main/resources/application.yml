@@ -15,3 +15,7 @@ spring:
     location: banner.txt
 server:
   port: 5050
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
