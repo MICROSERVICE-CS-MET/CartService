@@ -46,7 +46,7 @@ class CartController(
     }
 
     @DeleteMapping("/cartItems/removeBook")
-    suspend fun addBookToCart(@RequestBody removeBookFromCartRequest: RemoveBookFromCartRequest) {
+    suspend fun removeBookToCart(@RequestBody removeBookFromCartRequest: RemoveBookFromCartRequest) {
         cartService.removeBookFromCart(removeBookFromCartRequest)
     }
 
