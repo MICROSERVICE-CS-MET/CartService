@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
     kotlin("kapt") version "1.8.22"
+    id("org.jlleitschuh.gradle.ktlint") version "11.5.1"
 }
 
 group = "com.metcs"
@@ -41,8 +42,6 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
 
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.3")
-
-
 }
 
 tasks.withType<KotlinCompile> {

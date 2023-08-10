@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val cartProducer: CartProducer,
+    private val cartProducer: CartProducer
 ) {
     suspend fun findByUserId(userId: String): Cart {
         return cartRepository.findByUserId(userId) ?: cartRepository.save(
             Cart(
                 userId = userId,
-                cartItems = ArrayList<CartItem>(),
-            ),
+                cartItems = ArrayList<CartItem>()
+            )
         )
     }
     suspend fun addBookToCart(addToCartDto: AddBookToCartRequest) {
@@ -29,8 +29,8 @@ class CartService(
             Cart(
                 userId = addToCartDto.userId,
                 cartItems =
-                ArrayList<CartItem>(),
-            ),
+                ArrayList<CartItem>()
+            )
         )
         cart.cartItems = addToCartList(cart.cartItems!!.toMutableList(), addToCartDto)
         cartRepository.save(cart)
@@ -39,12 +39,12 @@ class CartService(
     suspend fun removeBookFromCart(removeBookFromCartRequest: RemoveBookFromCartRequest) {
         val cart = removeBookFromCartRequest.userId?.let { cartRepository.findByUserId(it) } ?: throw CartHasNoDataException(
             "Cart Already Has No" +
-                " Data",
+                " Data"
         )
         cart.cartItems = removeBookFromCartRequest.productId?.let {
             removeFromCartList(
                 cart.cartItems!!.toMutableList(),
-                it,
+                it
             )
         }
         cartRepository.save(cart)
@@ -55,8 +55,8 @@ class CartService(
             Cart(
                 userId = userId,
                 cartItems =
-                ArrayList<CartItem>(),
-            ),
+                ArrayList<CartItem>()
+            )
         )
         return cart.cartItems!!
     }
@@ -66,8 +66,8 @@ class CartService(
             Cart(
                 userId = userId,
                 cartItems =
-                ArrayList<CartItem>(),
-            ),
+                ArrayList<CartItem>()
+            )
         )
 
         cart.cartItems = ArrayList<CartItem>()

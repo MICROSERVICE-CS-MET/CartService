@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CartProducer(
-    private val kafkaTemplate: KafkaTemplate<String, CompleteOrderEvent>,
+    private val kafkaTemplate: KafkaTemplate<String, CompleteOrderEvent>
 ) {
     fun sendCompleteOrderEvent(completeOrderEvent: CompleteOrderEvent) {
         kafkaTemplate.send(COMPLETE_ORDER_TOPIC, completeOrderEvent)

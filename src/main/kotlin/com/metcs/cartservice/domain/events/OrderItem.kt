@@ -4,5 +4,5 @@ data class OrderItem(
     var productId: String,
     var productCount: Int,
     var unitPrice: Double,
-    var totalPrice: Int,
+    var totalPrice: Int
 )
