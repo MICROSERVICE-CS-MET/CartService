@@ -1,5 +1,7 @@
 package com.metcs.cartservice.service
 
+import com.metcs.cartservice.configuration.client.service.BookServiceClient
+import com.metcs.cartservice.configuration.client.service.CustomerServiceClient
 import com.metcs.cartservice.domain.dto.request.AddBookToCartRequest
 import com.metcs.cartservice.domain.dto.request.RemoveBookFromCartRequest
 import com.metcs.cartservice.domain.mapper.CartMapper
@@ -10,13 +12,16 @@ import com.metcs.cartservice.producer.CartProducer
 import com.metcs.cartservice.repository.CartRepository
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val cartProducer: CartProducer
+    private val cartProducer: CartProducer,
+    private val bookServiceClient: BookServiceClient,
+    private val customerServiceClient: CustomerServiceClient
 ) {
-    suspend fun findByUserId(userId: String): Cart {
+    suspend fun findByUserId(userId: UUID): Cart {
         return cartRepository.findByUserId(userId) ?: cartRepository.save(
             Cart(
                 userId = userId,
@@ -25,6 +30,9 @@ class CartService(
         )
     }
     suspend fun addBookToCart(addToCartDto: AddBookToCartRequest) {
+        bookServiceClient.findById(addToCartDto.productId)
+        customerServiceClient.findById(addToCartDto.userId)
+
         val cart = cartRepository.findByUserId(addToCartDto.userId) ?: cartRepository.save(
             Cart(
                 userId = addToCartDto.userId,
@@ -50,7 +58,7 @@ class CartService(
         cartRepository.save(cart)
     }
 
-    suspend fun getCartItemsByUserId(userId: String): List<CartItem> {
+    suspend fun getCartItemsByUserId(userId: UUID): List<CartItem> {
         var cart = cartRepository.findByUserId(userId) ?: cartRepository.save(
             Cart(
                 userId = userId,
@@ -61,7 +69,7 @@ class CartService(
         return cart.cartItems!!
     }
 
-    suspend fun cleanToCart(userId: String) {
+    suspend fun cleanToCart(userId: UUID) {
         var cart = cartRepository.findByUserId(userId) ?: cartRepository.save(
             Cart(
                 userId = userId,
@@ -80,7 +88,7 @@ class CartService(
         cartProducer.sendCompleteOrderEvent(completeOrderEvent)
     }
 
-    private fun removeFromCartList(cartItems: MutableList<CartItem>, bookId: String): MutableList<CartItem> {
+    private fun removeFromCartList(cartItems: MutableList<CartItem>, bookId: UUID): MutableList<CartItem> {
         val iterator = cartItems.iterator()
         while (iterator.hasNext()) {
             val item = iterator.next()
