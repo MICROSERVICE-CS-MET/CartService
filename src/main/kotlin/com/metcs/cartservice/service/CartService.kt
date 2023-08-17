@@ -112,6 +112,7 @@ class CartService(
                 foundItem.productId = book.id
                 foundItem.unitPrice = book.price
                 foundItem.totalPrice = book.price * product.productCount
+                foundItem.productName = book.name
                 break
             }
         }
@@ -119,7 +120,7 @@ class CartService(
             foundItem.productCount = foundItem.productCount?.plus(product.productCount)
             foundItem.totalPrice = foundItem.totalPrice!!.plus(product.productCount * book.price)
         } else {
-            val newItem = CartItem(product.productId, product.productCount, book.price, book.price * product.productCount)
+            val newItem = CartItem(productId = product.productId, productName = book.name, productCount = product.productCount, unitPrice = book.price, totalPrice = book.price * product.productCount)
             cartItems.add(newItem)
         }
         return cartItems
