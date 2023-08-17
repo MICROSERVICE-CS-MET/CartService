@@ -13,7 +13,4 @@ interface BookServiceClient {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable("id") id: UUID): BookResponse?
-
-    @GetMapping("/test")
-    fun test(): String
 }

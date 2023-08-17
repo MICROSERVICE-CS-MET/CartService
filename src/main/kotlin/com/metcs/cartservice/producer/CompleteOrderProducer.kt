@@ -6,7 +6,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class CartProducer(
+class CompleteOrderProducer(
     private val kafkaTemplate: KafkaTemplate<String, CompleteOrderEvent>
 ) {
     fun sendCompleteOrderEvent(completeOrderEvent: CompleteOrderEvent) {

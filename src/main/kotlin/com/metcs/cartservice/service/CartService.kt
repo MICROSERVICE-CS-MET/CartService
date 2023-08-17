@@ -9,7 +9,7 @@ import com.metcs.cartservice.domain.mapper.CartMapper
 import com.metcs.cartservice.domain.model.Cart
 import com.metcs.cartservice.domain.model.CartItem
 import com.metcs.cartservice.exception.CartHasNoDataException
-import com.metcs.cartservice.producer.CartProducer
+import com.metcs.cartservice.producer.CompleteOrderProducer
 import com.metcs.cartservice.repository.CartRepository
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
@@ -18,7 +18,7 @@ import java.util.UUID
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val cartProducer: CartProducer,
+    private val cartProducer: CompleteOrderProducer,
     private val bookServiceClient: BookServiceClient,
     private val customerServiceClient: CustomerServiceClient
 ) {
@@ -46,7 +46,7 @@ class CartService(
     }
 
     suspend fun removeBookFromCart(removeBookFromCartRequest: RemoveBookFromCartRequest) {
-        val cart = removeBookFromCartRequest.userId?.let { cartRepository.findByUserId(it) } ?: throw CartHasNoDataException(
+        val cart = removeBookFromCartRequest.userId.let { cartRepository.findByUserId(it) } ?: throw CartHasNoDataException(
             "Cart Already Has No" +
                 " Data"
         )
@@ -56,7 +56,7 @@ class CartService(
     }
 
     suspend fun getCartItemsByUserId(userId: UUID): List<CartItem> {
-        var cart = cartRepository.findByUserId(userId) ?: cartRepository.save(
+        val cart = cartRepository.findByUserId(userId) ?: cartRepository.save(
             Cart(
                 userId = userId,
                 cartItems =
@@ -67,7 +67,7 @@ class CartService(
     }
 
     suspend fun cleanToCart(userId: UUID) {
-        var cart = cartRepository.findByUserId(userId) ?: cartRepository.save(
+        val cart = cartRepository.findByUserId(userId) ?: cartRepository.save(
             Cart(
                 userId = userId,
                 cartItems =

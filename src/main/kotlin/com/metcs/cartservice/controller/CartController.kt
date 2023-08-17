@@ -23,35 +23,35 @@ class CartController(
     private val cartService: CartService
 ) {
 
-    @GetMapping("/findByUserId/{userid}")
+    @GetMapping("/find-by-user-id/{userid}")
     suspend fun findByUserId(@PathVariable("userid")userId: UUID): CartResponse {
         val converter = Mappers.getMapper(CartMapper::class.java)
         return converter.cartToCartResponse(cartService.findByUserId(userId))
     }
 
-    @GetMapping("/cartItems/{userid}")
+    @GetMapping("/car-items/{userid}")
     suspend fun findCartItemsByUserId(@PathVariable("userid")userId: UUID): List<CartItemResponse> {
         val converter = Mappers.getMapper(CartMapper::class.java)
         return converter.cartItemsToCartItemsListResponse(cartService.getCartItemsByUserId(userId))
     }
 
-    @PostMapping("/cartItems/addBook")
+    @PostMapping("/cart-items/add-book")
     suspend fun addBookToCart(@RequestBody addBookToCartRequest: AddBookToCartRequest) {
         cartService.addBookToCart(addBookToCartRequest)
     }
 
-    @DeleteMapping("/cartItems/removeBook")
+    @DeleteMapping("/cart-items/remove-book")
     suspend fun removeBookToCart(@RequestBody removeBookFromCartRequest: RemoveBookFromCartRequest) {
         cartService.removeBookFromCart(removeBookFromCartRequest)
     }
 
-    @PostMapping("/completeOrder/{cartId}")
+    @PostMapping("/complete-order/{cartId}")
     suspend fun completeOrder(@PathVariable("cartId")cartId: String): ResponseEntity<String> {
         cartService.completeOrder(cartId)
         return ResponseEntity.ok("Order Completed")
     }
 
-    @DeleteMapping("/cartItems/cleanCart/{userid}")
+    @DeleteMapping("/cart-items/clean-cart/{userid}")
     suspend fun cleanToCart(@PathVariable("userid")userId: UUID) {
         cartService.cleanToCart(userId)
     }

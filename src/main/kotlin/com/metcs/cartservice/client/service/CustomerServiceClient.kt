@@ -11,9 +11,6 @@ import java.util.UUID
 @FeignClient(value = "customer-service", url = "http://localhost:6060/customers")
 interface CustomerServiceClient {
 
-    @GetMapping("/test")
-    fun test(): String
-
     @GetMapping("/{id}")
     fun findById(@PathVariable("id") id: UUID): CustomerResponse?
 }
