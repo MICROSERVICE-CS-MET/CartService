@@ -1,4 +1,4 @@
-package com.metcs.cartservice.configuration.client.dto.response
+package com.metcs.cartservice.client.dto.response
 
 import java.util.UUID
 

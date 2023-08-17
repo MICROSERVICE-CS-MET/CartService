@@ -23,7 +23,7 @@ class CartController(
     private val cartService: CartService
 ) {
 
-    @GetMapping("/{userid}")
+    @GetMapping("/findByUserId/{userid}")
     suspend fun findByUserId(@PathVariable("userid")userId: UUID): CartResponse {
         val converter = Mappers.getMapper(CartMapper::class.java)
         return converter.cartToCartResponse(cartService.findByUserId(userId))

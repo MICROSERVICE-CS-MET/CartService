@@ -1,6 +1,6 @@
-package com.metcs.cartservice.configuration.client.service
+package com.metcs.cartservice.client.service
 
-import com.metcs.cartservice.configuration.client.dto.response.CustomerResponse
+import com.metcs.cartservice.client.dto.response.CustomerResponse
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
