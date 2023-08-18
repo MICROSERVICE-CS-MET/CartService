@@ -82,7 +82,7 @@ class CartService(
         val cart = cartRepository.findById(cartId).orElseThrow { RuntimeException("Cart Not Found") }
         val converter = Mappers.getMapper(CartMapper::class.java)
         val completeOrderEvent = converter.cartToCompleteOrderEvent(cart)
-        cartProducer.sendCompleteOrderEvent(completeOrderEvent)
+        cartProducer.send(completeOrderEvent)
     }
 
     private fun removeFromCartList(cartItems: MutableList<CartItem>, bookId: UUID, book: BookResponse): MutableList<CartItem> {

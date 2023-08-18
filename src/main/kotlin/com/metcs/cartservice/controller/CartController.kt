@@ -24,13 +24,13 @@ class CartController(
 ) {
 
     @GetMapping("/find-by-user-id/{userid}")
-    suspend fun findByUserId(@PathVariable("userid")userId: UUID): CartResponse {
+    suspend fun getByUserId(@PathVariable("userid")userId: UUID): CartResponse {
         val converter = Mappers.getMapper(CartMapper::class.java)
         return converter.cartToCartResponse(cartService.findByUserId(userId))
     }
 
     @GetMapping("/car-items/{userid}")
-    suspend fun findCartItemsByUserId(@PathVariable("userid")userId: UUID): List<CartItemResponse> {
+    suspend fun getCartItemsByUserId(@PathVariable("userid")userId: UUID): List<CartItemResponse> {
         val converter = Mappers.getMapper(CartMapper::class.java)
         return converter.cartItemsToCartItemsListResponse(cartService.getCartItemsByUserId(userId))
     }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 class CompleteOrderProducer(
     private val kafkaTemplate: KafkaTemplate<String, CompleteOrderEvent>
 ) {
-    fun sendCompleteOrderEvent(completeOrderEvent: CompleteOrderEvent) {
+    fun send(completeOrderEvent: CompleteOrderEvent) {
         kafkaTemplate.send(COMPLETE_ORDER_TOPIC, completeOrderEvent)
     }
 }
